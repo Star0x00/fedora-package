@@ -62,7 +62,7 @@ sharing is provided by xdg-desktop-portal-umbriel.
 %{_bindir}/umbriel
 %{_bindir}/start-umbriel
 %{_datadir}/umbriel/config.toml
-%{_datadir}/umbriel/shaders/
+%{_datadir}/umbriel/effects/
 %{_datadir}/wayland-sessions/umbriel.desktop
 %{_userunitdir}/umbriel.service
 %{_userunitdir}/umbriel-session.target
