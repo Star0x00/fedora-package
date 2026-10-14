@@ -1,4 +1,4 @@
-# go-musicfox, tracking the upstream master branch.
+# go-musicfox, tracking the upstream v5.1.0 release tag.
 #
 # Built with the upstream "enable_global_hotkey,purego" tags. The purego tag
 # selects the CGo-free X11 global-hotkey backend, so no X11/Xtst development
@@ -7,16 +7,15 @@
 # Dependencies are vendored in the source tarball, so the build is offline.
 
 %global debug_package %{nil}
-%global snap_date %(date -u +%%Y%%m%%d)
 
 Name:           go-musicfox
 Version:        5.1.0
-Release:        1.%{snap_date}%{?dist}
+Release:        1%{?dist}
 Summary:        Terminal music player for NetEase Cloud Music
 
 License:        GPL-3.0-only
 URL:            https://github.com/go-musicfox/go-musicfox
-Source0:        https://github.com/go-musicfox/go-musicfox/archive/refs/heads/master.tar.gz
+Source0:        https://github.com/go-musicfox/go-musicfox/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires:  golang >= 1.26
 BuildRequires:  gcc
@@ -29,11 +28,11 @@ go-musicfox is a terminal client for NetEase Cloud Music, written in Go.
 It offers playlists, daily recommendations, search, lyrics, global hotkeys
 and a music-player UI in the terminal.
 
-This package tracks the upstream master branch.
+This package tracks the upstream v5.1.0 release tag.
 
 %prep
-# GitHub branch archives extract into go-musicfox-master/
-%autosetup -n go-musicfox-master
+# GitHub tag archives extract into go-musicfox-5.1.0/
+%autosetup -n go-musicfox-%{version}
 
 %build
 export CGO_ENABLED=1
