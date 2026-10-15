@@ -41,6 +41,7 @@ Source0:        %{url}/archive/refs/tags/%{tag}.tar.gz
 BuildArch:      noarch
 
 BuildRequires:  sassc
+BuildRequires:  util-linux
 BuildRequires:  /usr/bin/glib-compile-resources
 BuildRequires:  /usr/bin/xmllint
 
@@ -56,9 +57,17 @@ GTK 2/3/4, GNOME Shell, Cinnamon, Metacity, XFWM and Plank.
 
 # The installer also drops a per-user 'gnome-theme-switcher' helper into
 # $HOME/.local/bin; that has no place in a system package build, so drop the
-# call. It also tries `sudo dnf install` for missing tools when they are not
-# present, which the build needs above guarantee.
+# call.
 sed -i 's|^  install_app$|  :|' install.sh
+
+# libs/lib-core.sh runs with `set -Eeo pipefail` and resolves the sudo binary
+# with `SUDO_BIN="$(which sudo)"`. The buildroot has no sudo, so that command
+# substitution fails and, because of `set -e`, aborts the whole install before
+# it does anything. Make the lookup tolerate a missing sudo; it is never
+# invoked here because every tool checked by install_theme_deps is pulled in by
+# the BuildRequires above.
+sed -i 's#SUDO_BIN="\$(which sudo)"#SUDO_BIN="$(command -v sudo || true)"#' \
+  libs/lib-core.sh
 
 %build
 # Nothing to compile separately: install.sh generates and installs the themes.

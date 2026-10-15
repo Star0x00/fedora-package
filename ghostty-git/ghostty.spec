@@ -25,6 +25,7 @@ BuildRequires:  gtk4-devel
 BuildRequires:  libadwaita-devel
 BuildRequires:  libX11-devel
 BuildRequires:  pkgconfig(bzip2)
+BuildRequires:  pkgconfig(egl)
 BuildRequires:  pkgconfig(fontconfig)
 BuildRequires:  pkgconfig(freetype2)
 BuildRequires:  pkgconfig(glib-2.0)
