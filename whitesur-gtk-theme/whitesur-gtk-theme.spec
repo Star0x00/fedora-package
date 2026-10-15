@@ -73,6 +73,10 @@ sed -i 's#SUDO_BIN="\$(which sudo)"#SUDO_BIN="$(command -v sudo || true)"#' \
 # Nothing to compile separately: install.sh generates and installs the themes.
 
 %install
+# install.sh refuses a --dest whose directory and parent are both absent, so
+# create it first (rpmbuild only makes the empty BUILDROOT).
+install -d %{buildroot}%{_datadir}/themes
+
 # No flags == upstream defaults: Light/Dark x normal/solid, accent 'default',
 # scheme 'standard', buttons 'normal'. Yields the WhiteSur-{Light,Dark}{,-solid}
 # directories. Add e.g. `-t blue -s nord -a alt` here to ship more variants,
