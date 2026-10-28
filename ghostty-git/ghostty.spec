@@ -16,17 +16,19 @@ Source0:        https://github.com/ghostty-org/ghostty/archive/refs/heads/main.t
 
 # Ghostty 1.4 needs Zig >= 0.17, which needs LLVM 22.1.8. Fedora has only
 # zig 0.16 (LLVM 21) and rawhide is on LLVM 23, so no system zig works.
-# Fetch the official prebuilt compiler and use it for the build instead.
-# sha256 (x86_64):  1cbe9df9f27e6b78d14ccbca43b6703a404ef79ef1c463de901d7f088d4e2026
-# sha256 (aarch64): 9e8d11661d4ae3bd57702a3832781e23ad151dde5798e16a5ccd503f65234ff8
+# Fetch the official prebuilt compiler at build time instead (the COPR
+# builder has network access, same as for Zig's build.zig.zon deps).
 %global zig_version 0.17.0
 %ifarch aarch64
 %global zig_arch aarch64
+%global zig_sha256 9e8d11661d4ae3bd57702a3832781e23ad151dde5798e16a5ccd503f65234ff8
 %else
 %global zig_arch x86_64
+%global zig_sha256 1cbe9df9f27e6b78d14ccbca43b6703a404ef79ef1c463de901d7f088d4e2026
 %endif
-Source1:        https://ziglang.org/download/%{zig_version}/zig-%{zig_arch}-linux-%{zig_version}.tar.xz
+%global zig_url https://ziglang.org/download/%{zig_version}/zig-%{zig_arch}-linux-%{zig_version}.tar.xz
 
+BuildRequires:  curl
 BuildRequires:  git-core
 BuildRequires:  gcc
 BuildRequires:  pandoc-cli
@@ -63,8 +65,11 @@ platform-native UI and GPU acceleration. This is a nightly build tracking the
 upstream main branch.
 
 %prep
-# Unpack the prebuilt Zig into %%{_builddir} before entering the source tree.
-tar -xf %{SOURCE1}
+# Download the prebuilt Zig (not a Source: COPR's SCM source fetching did not
+# pick it up) and verify it before unpacking into %%{_builddir}.
+curl -fL --retry 3 -o zig.tar.xz %{zig_url}
+echo "%{zig_sha256}  zig.tar.xz" | sha256sum -c -
+tar -xf zig.tar.xz
 %autosetup -n ghostty-main
 
 %build
