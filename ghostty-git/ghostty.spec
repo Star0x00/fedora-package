@@ -6,7 +6,7 @@
 %global snap_date %(date -u +%%Y%%m%%d)
 
 Name:           ghostty
-Version:        1.3.1
+Version:        1.4.0
 Release:        1.%{snap_date}%{?dist}
 Summary:        A fast, feature-rich terminal emulator written in Zig (main branch)
 
@@ -14,7 +14,19 @@ License:        MIT AND MPL-2.0 AND OFL-1.1 AND CC0-1.0 AND Apache-2.0
 URL:            https://ghostty.org/
 Source0:        https://github.com/ghostty-org/ghostty/archive/refs/heads/main.tar.gz
 
-BuildRequires:  (zig >= 0.16 with zig < 0.17)
+# Ghostty 1.4 needs Zig >= 0.17, which needs LLVM 22.1.8. Fedora has only
+# zig 0.16 (LLVM 21) and rawhide is on LLVM 23, so no system zig works.
+# Fetch the official prebuilt compiler and use it for the build instead.
+# sha256 (x86_64):  1cbe9df9f27e6b78d14ccbca43b6703a404ef79ef1c463de901d7f088d4e2026
+# sha256 (aarch64): 9e8d11661d4ae3bd57702a3832781e23ad151dde5798e16a5ccd503f65234ff8
+%global zig_version 0.17.0
+%ifarch aarch64
+%global zig_arch aarch64
+%else
+%global zig_arch x86_64
+%endif
+Source1:        https://ziglang.org/download/%{zig_version}/zig-%{zig_arch}-linux-%{zig_version}.tar.xz
+
 BuildRequires:  git-core
 BuildRequires:  gcc
 BuildRequires:  pandoc-cli
@@ -51,9 +63,12 @@ platform-native UI and GPU acceleration. This is a nightly build tracking the
 upstream main branch.
 
 %prep
+# Unpack the prebuilt Zig into %%{_builddir} before entering the source tree.
+tar -xf %{SOURCE1}
 %autosetup -n ghostty-main
 
 %build
+export PATH=%{_builddir}/zig-%{zig_arch}-linux-%{zig_version}:$PATH
 # Build and install in one step: DESTDIR redirects the install into the
 # buildroot, --prefix controls the layout. This avoids the stray zig temp
 # dirs that `zig build install` can copy into the buildroot.
