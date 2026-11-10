@@ -24,6 +24,7 @@ BuildRequires:  pkgconfig(cairo)
 BuildRequires:  pkgconfig(tomlplusplus)
 BuildRequires:  pkgconfig(nlohmann_json)
 BuildRequires:  pkgconfig(gtk4) >= 4.12
+BuildRequires:  pkgconfig(libei) == 1.0
 
 %description
 An xdg-desktop-portal backend for the Umbriel compositor, implementing the
