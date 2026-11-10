@@ -11,6 +11,8 @@ Source0:        https://github.com/10knamesmore/Mineral/archive/refs/heads/main.
 
 BuildRequires:  cargo
 BuildRequires:  gcc
+BuildRequires:  gcc-c++
+BuildRequires:  cmake
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  git-core
 BuildRequires:  pkgconfig(openssl)
